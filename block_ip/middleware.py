@@ -6,7 +6,16 @@ from models import BlockIP
 
 
 def get_ip(req):
-    return req.META['REMOTE_ADDR']
+    #http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
+    try:
+        x_forwarded_for = req.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = req.META.get('REMOTE_ADDR')
+        return ip
+    except:
+        return None
 
 
 def is_ip_in_nets(ip, nets):
